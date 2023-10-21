@@ -67,7 +67,8 @@ app.post("/login/", async (request, response) => {
     if (checkpassword === true) {
       const payload = { username: username };
       const jwttoken = jwt.sign(payload, "secret-key");
-      response.send(jwttoken);
+      console.log(jwttoken);
+      response.send({ jwttoken });
     } else {
       response.status(400);
       response.send("Invalid password");
