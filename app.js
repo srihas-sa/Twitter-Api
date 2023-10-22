@@ -66,7 +66,7 @@ app.post("/login/", async (request, response) => {
     const checkpassword = await bcrypt.compare(password, dbUserExists.password);
     if (checkpassword === true) {
       const payload = { username: username };
-      const jwttoken = jwt.sign(payload, "secret-key");
+      const jwttoken = jwt.sign(payload, "MY_SECRET_TOKEN");
       console.log(jwttoken);
       response.send({ jwttoken });
     } else {
@@ -84,6 +84,7 @@ const authenticateToken = (request, response, next) => {
   if (authHeader !== undefined) {
     jwtToken = authHeader.split(" ")[1];
   }
+  console.log(jwtToken);
   if (jwtToken === undefined) {
     response.status(401);
     response.send("Invalid JWT Token");
@@ -121,9 +122,11 @@ app.get("/user/tweets/feed/", authenticateToken, async (request, response) => {
 // API-4
 app.get("/user/following/", authenticateToken, async (request, response) => {
   let { username } = request;
+  console.log(username);
   const getUserTdQuery = `select user_id from user where username="${username}" ;`;
   const getuserId = await database.get(getUserTdQuery);
   // get followers id's
+  console.log(getuserId.user_id);
   const getFollowerIdsQuery = `select following_user_id from follower where follower_user_id="${getuserId.user_id}" ;`;
   const getFollowerIdArray = await database.all(getFollowerIdsQuery);
   const getFollowerisds = getFollowerIdArray.map((eachUser) => {
